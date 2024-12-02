@@ -1,0 +1,43 @@
+services:
+  client:
+    image: zionwebix/client2
+    container_name: vote-client2
+    ports:
+      - "8080:80"
+    networks:
+      - vote-network
+    depends_on:
+      - server
+  
+  server:
+    image: zionwebix/server2
+    container_name: vote-server2
+    ports:
+      - "3031:3030"
+    networks:
+      - vote-network
+    depends_on:
+      - mongo-db
+    environment:
+      - PORT=${PORT}
+      - DB_URI=${DB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+
+  mongo-db:
+    image: mongo
+    container_name: vote-mongo-db
+    ports:
+      - "3032:27017"
+    networks:
+      - vote-network
+    restart:
+      always
+    volumes:
+      - vote-volume:/data/db
+
+networks:
+  vote-network:
+    driver: bridge
+
+volumes:
+  vote-volume:
